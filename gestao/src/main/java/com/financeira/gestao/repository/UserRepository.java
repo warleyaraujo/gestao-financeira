@@ -1,4 +1,11 @@
 package com.financeira.gestao.repository;
 
-public class UserRepository {
+import com.financeira.gestao.model.UserModel;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
+
+
+@Repository
+public interface UserRepository extends CrudRepository<UserModel, Integer> {
+
 }
