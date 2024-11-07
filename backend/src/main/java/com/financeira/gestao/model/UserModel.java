@@ -3,16 +3,14 @@ package com.financeira.gestao.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
-import java.util.UUID;
-
 @Entity
 @Table(name = "user")
 public class UserModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(nullable = false, unique = true)
-    private String user_id;
+    @Column(nullable = false, unique = true, name = "user_id")
+    private String userId;
 
     @NotNull
     @Column(nullable = false)
@@ -29,16 +27,15 @@ public class UserModel {
     @Column(nullable = true)
     private String tel;
 
-    @NotNull
-    @Column(nullable = false)
-    private String password;
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private UserLoginModel userLogin;
 
-    public String getUser_id() {
-        return user_id;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setUser_id(String user_id) {
-        this.user_id = user_id;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public @NotNull String getName() {
@@ -65,19 +62,19 @@ public class UserModel {
         this.email = email;
     }
 
-    public @NotNull String getPassword() {
-        return password;
-    }
-
-    public void setPassword(@NotNull String password) {
-        this.password = password;
-    }
-
     public String getTel() {
         return tel;
     }
 
     public void setTel(String tel) {
         this.tel = tel;
+    }
+
+    public UserLoginModel getUserLogin() {
+        return userLogin;
+    }
+
+    public void setUserLogin(UserLoginModel userLogin) {
+        this.userLogin = userLogin;
     }
 }

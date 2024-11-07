@@ -18,10 +18,22 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/register-user")
-    public ResponseEntity<?> registerUser(@RequestBody UserModel userModel) {
-
+//    public ResponseEntity<?> registerUser(@RequestBody UserModel userModel) {
+    public ResponseEntity<?> registerUser(@RequestBody Map<String, Object> userMap) {
         try {
-            UserModel createUser = userService.createUser(userModel);
+            String name = (String) userMap.get("name");
+            String familyName = (String) userMap.get("familyName");
+            String email = (String) userMap.get("email");
+            String tel = (String) userMap.get("tel");
+            String password = (String) userMap.get("password");
+
+            UserModel userModel = new UserModel();
+            userModel.setName(name);
+            userModel.setFamilyName(familyName);
+            userModel.setEmail(email);
+            userModel.setTel(tel);
+
+            UserModel createUser = userService.createUser(userModel, password);
             return new ResponseEntity<>(createUser, HttpStatus.CREATED);
         } catch (Exception e) {
             throw new RuntimeException(e);

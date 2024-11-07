@@ -1,9 +1,13 @@
 package com.financeira.gestao.service;
 
+import com.financeira.gestao.model.UserLoginModel;
 import com.financeira.gestao.model.UserModel;
+import com.financeira.gestao.repository.UserLoginRepository;
 import com.financeira.gestao.repository.UserRepository;
 import exception.InvalidFieldException;
 import org.springframework.stereotype.Service;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -12,13 +16,19 @@ import java.util.regex.Pattern;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final UserLoginRepository userLoginRepository;
 
-    public UserService(UserRepository userRepository) {
+    private PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    public UserService(UserRepository userRepository, UserLoginRepository userLoginRepository) {
         this.userRepository = userRepository;
+        this.userLoginRepository = userLoginRepository;
     }
 
     @Transactional
-    public UserModel createUser(UserModel user) {
+    public UserModel createUser(UserModel user, String password) {
         String formattedTel = formatterTel(user.getTel());
 
         if (!user.getTel().isEmpty() && userRepository.findByTel(formattedTel).isPresent()) {
@@ -35,7 +45,18 @@ public class UserService {
 
         user.setTel(formattedTel);
 
-        return userRepository.save(user);
+        UserModel savedUser = userRepository.save(user);
+
+        UserLoginModel userLogin = new UserLoginModel();
+        userLogin.setEmail(user.getEmail());
+        userLogin.setPassword(passwordEncoder().encode(password));
+        userLogin.setUser(savedUser);
+
+        System.out.println(userLogin.getPassword());
+
+        userLoginRepository.save(userLogin);
+
+        return savedUser;
     }
 
     private String formatterTel(String tel) {
