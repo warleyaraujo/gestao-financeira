@@ -3,13 +3,16 @@ package com.financeira.gestao.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
+import java.util.UUID;
+
 @Entity
 @Table(name = "user")
 public class UserModel {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long user_id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(nullable = false, unique = true)
+    private String user_id;
 
     @NotNull
     @Column(nullable = false)
@@ -20,20 +23,21 @@ public class UserModel {
     private String familyName;
 
     @NotNull
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String email;
 
+    @Column(nullable = true)
     private String tel;
 
     @NotNull
     @Column(nullable = false)
     private String password;
 
-    public Long getUser_id() {
+    public String getUser_id() {
         return user_id;
     }
 
-    public void setUser_id(Long user_id) {
+    public void setUser_id(String user_id) {
         this.user_id = user_id;
     }
 
