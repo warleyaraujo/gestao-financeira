@@ -8,8 +8,9 @@ import jakarta.validation.constraints.NotNull;
 public class UserModel {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long user_id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(nullable = false, unique = true, name = "user_id")
+    private String userId;
 
     @NotNull
     @Column(nullable = false)
@@ -20,21 +21,21 @@ public class UserModel {
     private String familyName;
 
     @NotNull
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String email;
 
+    @Column(nullable = true)
     private String tel;
 
-    @NotNull
-    @Column(nullable = false)
-    private String password;
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private UserLoginModel userLogin;
 
-    public Long getUser_id() {
-        return user_id;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setUser_id(Long user_id) {
-        this.user_id = user_id;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public @NotNull String getName() {
@@ -61,19 +62,19 @@ public class UserModel {
         this.email = email;
     }
 
-    public @NotNull String getPassword() {
-        return password;
-    }
-
-    public void setPassword(@NotNull String password) {
-        this.password = password;
-    }
-
     public String getTel() {
         return tel;
     }
 
     public void setTel(String tel) {
         this.tel = tel;
+    }
+
+    public UserLoginModel getUserLogin() {
+        return userLogin;
+    }
+
+    public void setUserLogin(UserLoginModel userLogin) {
+        this.userLogin = userLogin;
     }
 }

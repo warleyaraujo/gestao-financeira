@@ -5,32 +5,35 @@ import com.financeira.gestao.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @RestController
+@RequestMapping("/user")
 public class UserController {
 
     @Autowired
     private UserService userService;
 
-    @GetMapping("/")
-    public Map<String, String> helloWorld() {
-        Map <String, String> response = new HashMap<>();
-        response.put("say", "Hello World!");
-        return response;
-    }
-
     @PostMapping("/register-user")
-    public ResponseEntity<?> registerUser(@RequestBody UserModel userModel) {
-
+//    public ResponseEntity<?> registerUser(@RequestBody UserModel userModel) {
+    public ResponseEntity<?> registerUser(@RequestBody Map<String, Object> userMap) {
         try {
-            UserModel createUser = userService.createUser(userModel);
+            String name = (String) userMap.get("name");
+            String familyName = (String) userMap.get("familyName");
+            String email = (String) userMap.get("email");
+            String tel = (String) userMap.get("tel");
+            String password = (String) userMap.get("password");
+
+            UserModel userModel = new UserModel();
+            userModel.setName(name);
+            userModel.setFamilyName(familyName);
+            userModel.setEmail(email);
+            userModel.setTel(tel);
+
+            UserModel createUser = userService.createUser(userModel, password);
             return new ResponseEntity<>(createUser, HttpStatus.CREATED);
         } catch (Exception e) {
             throw new RuntimeException(e);
