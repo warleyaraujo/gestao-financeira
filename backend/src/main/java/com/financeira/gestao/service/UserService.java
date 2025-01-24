@@ -1,8 +1,6 @@
 package com.financeira.gestao.service;
 
-import com.financeira.gestao.model.UserLoginModel;
-import com.financeira.gestao.model.UserModel;
-import com.financeira.gestao.repository.UserLoginRepository;
+import com.financeira.gestao.model.UsersModel;
 import com.financeira.gestao.repository.UserRepository;
 import exception.InvalidFieldException;
 import org.springframework.stereotype.Service;
@@ -16,19 +14,17 @@ import java.util.regex.Pattern;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final UserLoginRepository userLoginRepository;
 
     private PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    public UserService(UserRepository userRepository, UserLoginRepository userLoginRepository) {
+    public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.userLoginRepository = userLoginRepository;
     }
 
     @Transactional
-    public UserModel createUser(UserModel user, String password) {
+    public UsersModel createUser(UsersModel user) {
         String formattedTel = formatterTel(user.getTel());
 
         if (!user.getTel().isEmpty() && userRepository.findByTel(formattedTel).isPresent()) {
@@ -45,16 +41,7 @@ public class UserService {
 
         user.setTel(formattedTel);
 
-        UserModel savedUser = userRepository.save(user);
-
-        UserLoginModel userLogin = new UserLoginModel();
-        userLogin.setEmail(user.getEmail());
-        userLogin.setPassword(passwordEncoder().encode(password));
-        userLogin.setUser(savedUser);
-
-        System.out.println(userLogin.getPassword());
-
-        userLoginRepository.save(userLogin);
+        UsersModel savedUser = userRepository.save(user);
 
         return savedUser;
     }
